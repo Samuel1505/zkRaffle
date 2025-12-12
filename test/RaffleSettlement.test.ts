@@ -306,11 +306,7 @@ describe("RaffleSettlement", function () {
       );
 
       const claim = claims[0];
-      const leaf = ethers.solidityPackedKeccak256(
-        ["bytes32", "bytes32", "bool"],
-        [claim.sid, claim.r, claim.win]
-      );
-      const proof = tree.getProof([leaf]);
+      const proof = tree.getProof(claim.index);
 
       const isValid = await raffleSettlement.verifyLeafAndMerkle(
         raffleId,
@@ -391,11 +387,7 @@ describe("RaffleSettlement", function () {
       await raffleSettlement.pause();
 
       const claim = claims[0];
-      const leaf = ethers.solidityPackedKeccak256(
-        ["bytes32", "bytes32", "bool"],
-        [claim.sid, claim.r, claim.win]
-      );
-      const proof = tree.getProof([leaf]);
+      const proof = tree.getProof(claim.index);
 
       await expect(
         raffleSettlement.revealAndSettle(raffleId, claim.sid, claim.r, claim.win, proof)
