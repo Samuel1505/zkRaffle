@@ -26,16 +26,16 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#how-it-works" className="body-md text-(--gray-700) hover:text-(--primary) transition-colors">
+            <a href="#how-it-works" className="body-md text-gray-700 hover:text-primary transition-colors">
               How It Works
             </a>
-            <a href="#features" className="body-md text-(--gray-700) hover:text-(--primary) transition-colors">
+            <a href="#features" className="body-md text-gray-700 hover:text-primary transition-colors">
               Features
             </a>
-            <a href="#raffles" className="body-md text-(--gray-700) hover:text-(--primary) transition-colors">
+            <a href="#raffles" className="body-md text-gray-700 hover:text-primary transition-colors">
               Active Raffles
             </a>
-            <a href="#about" className="body-md text-(--gray-700) hover:text-(--primary) transition-colors">
+            <a href="#about" className="body-md text-gray-700 hover:text-primary transition-colors">
               About
             </a>
           </nav>
@@ -60,12 +60,12 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-(--gray-100) transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
             {isMenuOpen ? (
-              <X className="w-6 h-6 text-(--gray-700)" />
+              <X className="w-6 h-6 text-gray-700" />
             ) : (
-              <Menu className="w-6 h-6 text-(--gray-700)" />
+              <Menu className="w-6 h-6 text-gray-700" />
             )}
           </button>
         </div>
@@ -73,32 +73,32 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden glass-effect border-t border-(--gray-200)">
+        <div className="md:hidden glass-effect border-t border-gray-200">
           <div className="px-4 py-6 space-y-4">
             <a
               href="#how-it-works"
-              className="block body-md text-(--gray-700) hover:text-(--primary) transition-colors py-2"
+              className="block body-md text-gray-700 hover:text-primary transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
               How It Works
             </a>
             <a
               href="#features"
-              className="block body-md text-(--gray-700) hover:text-(--primary) transition-colors py-2"
+              className="block body-md text-gray-700 hover:text-primary transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </a>
             <a
               href="#raffles"
-              className="block body-md text-(--gray-700) hover:text-(--primary) transition-colors py-2"
+              className="block body-md text-gray-700 hover:text-primary transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
               Active Raffles
             </a>
             <a
               href="#about"
-              className="block body-md text-(--gray-700) hover:text-(--primary) transition-colors py-2"
+              className="block body-md text-gray-700 hover:text-primary transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
               About
@@ -107,7 +107,7 @@ export default function Header() {
               onClick={handleConnectWallet}
               className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
                 isWalletConnected
-                  ? 'bg-(--success) text-white'
+                  ? 'bg-success text-white'
                   : 'gradient-primary text-white'
               }`}
             >
