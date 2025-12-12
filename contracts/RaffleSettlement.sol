@@ -161,40 +161,53 @@ contract RaffleSettlement is AccessControl, ReentrancyGuard, Pausable {
             "RaffleSettlement: claim period not expired yet"
         );
 
+        bytes32 merkleRoot = raffle.merkleRoot;
+        address rewardToken = raffle.rewardToken;
+
         for (uint256 i = 0; i < sids.length; i++) {
-            bytes32 sid = sids[i];
-            bytes32 r = rs[i];
-            bool win = wins[i];
-            bytes32[] calldata merkleProof = merkleProofs[i];
+            _settleClaim(raffleId, sids[i], rs[i], wins[i], merkleProofs[i], merkleRoot, rewardToken);
+        }
+    }
 
-            // Skip if already settled
-            if (settledClaims[raffleId][sid]) {
-                continue;
-            }
+    /**
+     * @notice Internal function to settle a single claim (reduces stack depth)
+     */
+    function _settleClaim(
+        uint256 raffleId,
+        bytes32 sid,
+        bytes32 r,
+        bool win,
+        bytes32[] calldata merkleProof,
+        bytes32 merkleRoot,
+        address rewardToken
+    ) internal {
+        // Skip if already settled
+        if (settledClaims[raffleId][sid]) {
+            return;
+        }
 
-            // Verify claim exists
-            RaffleRegistry.Claim memory claim = raffleRegistry.getClaim(raffleId, sid);
-            if (claim.claimer == address(0)) {
-                continue;
-            }
+        // Verify claim exists
+        RaffleRegistry.Claim memory claim = raffleRegistry.getClaim(raffleId, sid);
+        if (claim.claimer == address(0)) {
+            return;
+        }
 
-            // Compute leaf and verify Merkle proof
-            bytes32 leaf = keccak256(abi.encodePacked(sid, r, win));
-            if (!MerkleProof.verify(merkleProof, raffle.merkleRoot, leaf)) {
-                continue; // Skip invalid proofs
-            }
+        // Compute leaf and verify Merkle proof
+        bytes32 leaf = keccak256(abi.encodePacked(sid, r, win));
+        if (!MerkleProof.verify(merkleProof, merkleRoot, leaf)) {
+            return; // Skip invalid proofs
+        }
 
-            // Mark as settled
-            settledClaims[raffleId][sid] = true;
-            raffleRegistry.markClaimRevealed(raffleId, sid);
+        // Mark as settled
+        settledClaims[raffleId][sid] = true;
+        raffleRegistry.markClaimRevealed(raffleId, sid);
 
-            if (win) {
-                totalWinners[raffleId]++;
-                _distributeReward(raffleId, sid, claim.claimer, raffle.rewardToken);
-                emit WinnerSettled(raffleId, sid, claim.claimer, raffle.rewardToken, 0, 0);
-            } else {
-                emit NonWinnerRevealed(raffleId, sid, claim.claimer);
-            }
+        if (win) {
+            totalWinners[raffleId]++;
+            _distributeReward(raffleId, sid, claim.claimer, rewardToken);
+            emit WinnerSettled(raffleId, sid, claim.claimer, rewardToken, 0, 0);
+        } else {
+            emit NonWinnerRevealed(raffleId, sid, claim.claimer);
         }
     }
 
