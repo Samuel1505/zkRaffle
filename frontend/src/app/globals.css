@@ -30,7 +30,7 @@
   --gray-900: #111827;
 }
 
-/* stylelint-disable-next-line */
+/* stylelint-disable at-rule-no-unknown */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -55,6 +55,7 @@
   --font-sans: 'Inter', var(--font-geist-sans);
   --font-display: 'Space Grotesk', var(--font-geist-sans);
 }
+/* stylelint-enable at-rule-no-unknown */
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -70,12 +71,11 @@ body {
 }
 
 /* Custom Utilities */
-/* stylelint-disable-next-line */
+/* stylelint-disable at-rule-no-unknown */
 @utility gradient-primary {
   background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
 }
 
-/* stylelint-disable-next-line */
 @utility gradient-text {
   background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
   -webkit-background-clip: text;
@@ -83,7 +83,6 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* stylelint-disable-next-line */
 @utility glass-effect {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -91,12 +90,10 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* stylelint-disable-next-line */
 @utility animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
-/* stylelint-disable-next-line */
 @utility animate-glow {
   animation: glow 2s ease-in-out infinite alternate;
 }
@@ -120,7 +117,6 @@ body {
 }
 
 /* Typography Utilities */
-/* stylelint-disable-next-line */
 @utility heading-xl {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 4rem;
@@ -129,7 +125,6 @@ body {
   letter-spacing: -0.02em;
 }
 
-/* stylelint-disable-next-line */
 @utility heading-lg {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 3rem;
@@ -138,7 +133,6 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* stylelint-disable-next-line */
 @utility heading-md {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 2rem;
@@ -146,7 +140,6 @@ body {
   line-height: 1.3;
 }
 
-/* stylelint-disable-next-line */
 @utility heading-sm {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.5rem;
@@ -154,16 +147,15 @@ body {
   line-height: 1.4;
 }
 
-/* stylelint-disable-next-line */
 @utility body-lg {
   font-size: 1.125rem;
   line-height: 1.75;
   font-weight: 400;
 }
 
-/* stylelint-disable-next-line */
 @utility body-md {
   font-size: 1rem;
   line-height: 1.5;
   font-weight: 400;
 }
+/* stylelint-enable at-rule-no-unknown */
