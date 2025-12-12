@@ -138,7 +138,7 @@ describe("RaffleSettlement", function () {
         [winningClaim.sid, winningClaim.r, winningClaim.win]
       );
 
-      const proof = tree.getProof([leaf]);
+      const proof = tree.getProof(winningClaim.index);
 
       await expect(
         raffleSettlement.revealAndSettle(
@@ -186,7 +186,7 @@ describe("RaffleSettlement", function () {
         [nonWinningClaim.sid, nonWinningClaim.r, nonWinningClaim.win]
       );
 
-      const proof = tree.getProof([leaf]);
+      const proof = tree.getProof(nonWinningClaim.index);
 
       await expect(
         raffleSettlement.revealAndSettle(
@@ -216,11 +216,7 @@ describe("RaffleSettlement", function () {
       );
 
       const claim = claims[0];
-      const leaf = ethers.solidityPackedKeccak256(
-        ["bytes32", "bytes32", "bool"],
-        [claim.sid, claim.r, claim.win]
-      );
-      const proof = tree.getProof([leaf]);
+      const proof = tree.getProof(claim.index);
 
       await expect(
         raffleSettlement.revealAndSettle(raffleId, claim.sid, claim.r, claim.win, proof)
@@ -264,11 +260,7 @@ describe("RaffleSettlement", function () {
       await time.increaseTo(expiryTimestamp + 1);
 
       const claim = claims[0];
-      const leaf = ethers.solidityPackedKeccak256(
-        ["bytes32", "bytes32", "bool"],
-        [claim.sid, claim.r, claim.win]
-      );
-      const proof = tree.getProof([leaf]);
+      const proof = tree.getProof(claim.index);
 
       await raffleSettlement.revealAndSettle(raffleId, claim.sid, claim.r, claim.win, proof);
 
