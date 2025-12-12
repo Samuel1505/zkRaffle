@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { time, loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import hre from "hardhat";
 import { ethers } from "hardhat";
-import { MerkleTree } from "@openzeppelin/merkle-tree";
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 
 describe("RaffleSettlement", function () {
   async function deployContractsFixture() {
@@ -47,8 +47,9 @@ describe("RaffleSettlement", function () {
     numWinners: number
   ) {
     // Create leaves for Merkle tree
-    const leaves: string[][] = [];
-    const claims: Array<{ sid: string; r: string; win: boolean; user: any }> = [];
+    // Each leaf is keccak256(abi.encodePacked(sid, r, win))
+    const leaves: string[] = [];
+    const claims: Array<{ sid: string; r: string; win: boolean; user: any; index: number }> = [];
 
     for (let i = 0; i < 10; i++) {
       const sid = ethers.keccak256(ethers.toUtf8Bytes(`product-${i}`));
@@ -58,13 +59,18 @@ describe("RaffleSettlement", function () {
 
       // Leaf = keccak256(abi.encodePacked(sid, r, win))
       const leaf = ethers.solidityPackedKeccak256(["bytes32", "bytes32", "bool"], [sid, r, win]);
-      leaves.push([leaf]);
+      leaves.push(leaf);
 
-      claims.push({ sid, r, win, user });
+      claims.push({ sid, r, win, user, index: i });
     }
 
-    // Build Merkle tree
-    const tree = new MerkleTree(leaves, ["bytes32"]);
+    // Build Merkle tree from leaf hashes
+    // OpenZeppelin's StandardMerkleTree expects values, but we have hashes
+    // So we'll create a tree where each value is a bytes32 hash
+    const tree = StandardMerkleTree.of(
+      leaves.map((leaf) => [leaf]),
+      ["bytes32"]
+    );
     const merkleRoot = tree.root;
 
     // Create raffle
