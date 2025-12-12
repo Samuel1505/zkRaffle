@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { time, loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import hre from "hardhat";
 import { ethers } from "hardhat";
-import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
+import { MerkleProofHelper } from "./helpers/MerkleProofHelper";
 
 describe("RaffleSettlement", function () {
   async function deployContractsFixture() {
@@ -65,12 +65,7 @@ describe("RaffleSettlement", function () {
     }
 
     // Build Merkle tree from leaf hashes
-    // OpenZeppelin's StandardMerkleTree expects values, but we have hashes
-    // So we'll create a tree where each value is a bytes32 hash
-    const tree = StandardMerkleTree.of(
-      leaves.map((leaf) => [leaf]),
-      ["bytes32"]
-    );
+    const tree = new MerkleProofHelper(leaves);
     const merkleRoot = tree.root;
 
     // Create raffle
