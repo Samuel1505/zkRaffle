@@ -1,7 +1,8 @@
-import { keccak256, AbiCoder } from "ethers";
+import { keccak256, concat } from "ethers";
 
 /**
- * Simple Merkle tree implementation that matches OpenZeppelin's MerkleProof.verify format
+ * Merkle tree helper that builds trees compatible with OpenZeppelin's MerkleProof.verify
+ * Uses commutative keccak256 hashing (sorted pairs)
  */
 export class MerkleProofHelper {
   private leaves: string[];
@@ -15,6 +16,14 @@ export class MerkleProofHelper {
     this.root = this.tree[this.tree.length - 1][0];
   }
 
+  private commutativeKeccak256(a: string, b: string): string {
+    // Sort to make it commutative: hash the smaller one first
+    const aNum = BigInt(a);
+    const bNum = BigInt(b);
+    const sorted = aNum < bNum ? [a, b] : [b, a];
+    return keccak256(concat(sorted));
+  }
+
   private buildTree(): void {
     let currentLevel = this.leaves;
 
@@ -23,16 +32,13 @@ export class MerkleProofHelper {
 
       for (let i = 0; i < currentLevel.length; i += 2) {
         if (i + 1 < currentLevel.length) {
-          // Hash pair of nodes
-          const left = currentLevel[i].slice(2); // Remove 0x
-          const right = currentLevel[i + 1].slice(2);
-          const combined = "0x" + left + right;
-          nextLevel.push(keccak256(combined));
+          // Hash pair using commutative function
+          const hash = this.commutativeKeccak256(currentLevel[i], currentLevel[i + 1]);
+          nextLevel.push(hash);
         } else {
           // Odd node, hash with itself
-          const node = currentLevel[i].slice(2);
-          const combined = "0x" + node + node;
-          nextLevel.push(keccak256(combined));
+          const hash = this.commutativeKeccak256(currentLevel[i], currentLevel[i]);
+          nextLevel.push(hash);
         }
       }
 
