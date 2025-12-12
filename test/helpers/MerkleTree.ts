@@ -1,8 +1,8 @@
-import { keccak256, toUtf8Bytes, solidityPackedKeccak256 } from "ethers";
+import { keccak256, solidityPackedKeccak256, AbiCoder } from "ethers";
 
 export interface Leaf {
-  sid: string;
-  r: string;
+  sid: string; // bytes32 as hex string
+  r: string; // bytes32 as hex string
   win: boolean;
 }
 
@@ -12,13 +12,16 @@ export class MerkleTree {
   public root: string;
 
   constructor(leaves: Leaf[]) {
-    // Compute leaf hashes: keccak256(sid || r || win)
-    this.leaves = leaves.map((leaf) =>
-      solidityPackedKeccak256(
+    // Compute leaf hashes: keccak256(abi.encodePacked(sid, r, win))
+    // This matches the contract's keccak256(abi.encodePacked(sid, r, win))
+    this.leaves = leaves.map((leaf) => {
+      const abiCoder = AbiCoder.defaultAbiCoder();
+      const encoded = abiCoder.encode(
         ["bytes32", "bytes32", "bool"],
         [leaf.sid, leaf.r, leaf.win]
-      )
-    );
+      );
+      return keccak256(encoded);
+    });
 
     // Build Merkle tree
     this.tree = [this.leaves];
@@ -34,16 +37,14 @@ export class MerkleTree {
 
       for (let i = 0; i < currentLevel.length; i += 2) {
         if (i + 1 < currentLevel.length) {
-          // Pair of nodes
-          const hash = keccak256(
-            toUtf8Bytes(currentLevel[i] + currentLevel[i + 1])
-          );
+          // Pair of nodes - hash concatenated
+          const pair = currentLevel[i] + currentLevel[i + 1].slice(2); // Remove 0x from second
+          const hash = keccak256("0x" + pair.replace(/0x/g, ""));
           nextLevel.push(hash);
         } else {
           // Odd node, hash with itself
-          const hash = keccak256(
-            toUtf8Bytes(currentLevel[i] + currentLevel[i])
-          );
+          const pair = currentLevel[i] + currentLevel[i].slice(2);
+          const hash = keccak256("0x" + pair.replace(/0x/g, ""));
           nextLevel.push(hash);
         }
       }
